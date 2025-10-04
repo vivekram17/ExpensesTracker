@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Expense Tracker Dashboard</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            background-color: #f4f6f9;
+        }
+        .card {
+            border-radius: 15px;
+        }
+        .card-header {
+            font-weight: bold;
+        }
+        .table thead {
+            background-color: #007bff;
+            color: white;
+        }
+        .table tbody tr:hover {
+            background-color: #f1f7ff;
+        }
+        .btn-rounded {
+            border-radius: 50px;
+        }
+        .badge-category {
+            font-size: 0.85rem;
+        }
+        .summary-card {
+            border-left: 5px solid;
+        }
+        .summary-icon {
+            font-size: 1.5rem;
+        }
+    </style>
+</head>
+<body>
+<div class="container mt-5">
+    <!-- Header -->
+    <div class="text-center mb-4">
+        <h1 class="fw-bold text-primary">💰 Expense Tracker Dashboard</h1>
+        <p class="text-muted">Visualize and manage your expenses easily</p>
+    </div>
+
+    <!-- Summary Cards -->
+    <div class="row g-4 mb-5">
+        <div class="col-md-3">
+            <div class="card shadow-sm summary-card border-primary p-3">
+                <div class="d-flex align-items-center">
+                    <i class="bi bi-currency-dollar text-primary summary-icon me-3"></i>
+                    <div>
+                        <h5>Total Expenses</h5>
+                        <h4 th:text="${totalAmount}">$0</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card shadow-sm summary-card border-success p-3">
+                <div class="d-flex align-items-center">
+                    <i class="bi bi-list-task text-success summary-icon me-3"></i>
+                    <div>
+                        <h5>Entries</h5>
+                        <h4 th:text="${expenses.size()}">0</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card shadow-sm summary-card border-warning p-3">
+                <div class="d-flex align-items-center">
+                    <i class="bi bi-arrow-up-circle text-warning summary-icon me-3"></i>
+                    <div>
+                        <h5>Highest Expense</h5>
+                        <h4 th:text="${maxExpense}">$0</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card shadow-sm summary-card border-danger p-3">
+                <div class="d-flex align-items-center">
+                    <i class="bi bi-graph-up text-danger summary-icon me-3"></i>
+                    <div>
+                        <h5>Average Expense</h5>
+                        <h4 th:text="${averageExpense}">$0</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dashboard Row: Form + Chart -->
+    <div class="row mb-5 g-4">
+        <!-- Add/Edit Form -->
+        <div class="col-lg-6">
+            <div class="card shadow-sm p-4">
+                <h5 class="mb-3 fw-bold">Add / Edit Expense</h5>
+                <form th:action="@{${edit} ? '/update' : '/add'}" th:object="${expense}" method="post">
+                    <input type="hidden" th:field="*{id}"/>
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <input type="number" step="0.01" th:field="*{amount}" placeholder="Amount" class="form-control form-control-lg" required>
+                        </div>
+                        <div class="col-md-4">
+                            <input type="date" th:field="*{date}" class="form-control form-control-lg" required>
+                        </div>
+                        <div class="col-md-4">
+                            <input type="text" th:field="*{category}" placeholder="Category" class="form-control form-control-lg" required>
+                        </div>
+                        <div class="col-md-12 mt-2">
+                            <input type="text" th:field="*{note}" placeholder="Note" class="form-control form-control-lg">
+                        </div>
+                        <div class="col-md-12 mt-3 d-grid">
+                            <button type="submit" class="btn btn-primary btn-lg btn-rounded" th:text="${edit} ? 'Update' : 'Add'">
+                                <i class="bi bi-plus-circle me-1"></i>
+                                Add
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Category Chart -->
+        <div class="col-lg-6">
+            <div class="card shadow-sm p-4">
+                <h5 class="mb-3 fw-bold">Expenses by Category</h5>
+                <canvas id="categoryChart" height="250"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Expenses Table -->
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white fw-bold">
+            All Expenses
+        </div>
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Amount</th>
+                    <th>Date</th>
+                    <th>Category</th>
+                    <th>Note</th>
+                    <th>Action</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="expense : ${expenses}">
+                    <td th:text="${expense.id}"></td>
+                    <td th:text="${expense.amount}"></td>
+                    <td th:text="${expense.date}"></td>
+                    <td>
+                        <span class="badge bg-success badge-category" th:text="${expense.category}"></span>
+                    </td>
+                    <td th:text="${expense.note}"></td>
+                    <td>
+                        <a th:href="@{'/edit/' + ${expense.id}}" class="btn btn-warning btn-sm btn-rounded me-1">
+                            <i class="bi bi-pencil-square"></i> Edit
+                        </a>
+                        <a th:href="@{'/delete/' + ${expense.id}}" class="btn btn-danger btn-sm btn-rounded">
+                            <i class="bi bi-trash"></i> Delete
+                        </a>
+                    </td>
+                </tr>
+                <tr th:if="${expenses.size() == 0}">
+                    <td colspan="6" class="text-center text-muted py-3">No expenses added yet.</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Chart.js Script -->
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    const ctx = document.getElementById('categoryChart').getContext('2d');
+    const categoryData = /*[[${categoryData}]]*/ {};
+    const labels = Object.keys(categoryData);
+    const data = Object.values(categoryData);
+
+    new Chart(ctx, {
+        type: 'pie',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Expenses by Category',
+                data: data,
+                backgroundColor: [
+                    '#007bff', '#28a745', '#ffc107', '#dc3545', '#6c757d', '#17a2b8'
+                ],
+                borderColor: '#fff',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return '$' + context.raw;
+                        }
+                    }
+                }
+            }
+        }
+    });
+    /*]]>*/
+</script>
+</body>
+</html>
+
+
+
