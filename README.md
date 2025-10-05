@@ -85,6 +85,7 @@ http://localhost:8080/
 
 ### 4. Optional: Configure Database
 By default, H2 in-memory database is used.
+
 To use MySQL or another database, update application.properties:
 ```bash
 spring.datasource.url=jdbc:mysql://localhost:3306/expense_db
@@ -111,6 +112,7 @@ spring.jpa.hibernate.ddl-auto=update
 ### 👤 Author
 
 Your Name – Vivek Ram
+
 Email: vivek.nimmalapudi17@gmail.com
 
 GitHub: vivekram17
