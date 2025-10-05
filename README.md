@@ -108,4 +108,9 @@ spring.jpa.hibernate.ddl-auto=update
 
 ![Expense Table UI](https://github.com/vivekram17/ExpensesTracker/blob/master/src/main/resources/assets/Screenshot%202025-10-05%20093616.png?raw=true)
 
+### 👤 Author
 
+Your Name – Vivek Ram
+Email: vivek.nimmalapudi17@gmail.com
+
+GitHub: vivekram17
