@@ -67,4 +67,36 @@ expense-tracker/
 ```bash
 git clone https://github.com/yourusername/expense-tracker.git
 cd expense-tracker
+```
+
+### 2. Build and Run
+Use the following command to start the Spring Boot application:
+
+```bash
+mvn spring-boot:run
+
+```
+
+### 3. Access the application
+Open your browser and navigate to:
+```bash
+http://localhost:8080/
+```
+
+### 4. Optional: Configure Database
+By default, H2 in-memory database is used.
+To use MySQL or another database, update application.properties:
+```bash
+spring.datasource.url=jdbc:mysql://localhost:3306/expense_db
+spring.datasource.username=root
+spring.datasource.password=yourpassword
+spring.jpa.hibernate.ddl-auto=update
+
+```
+
+### 🎨 Screenshots
+
+
+
+
 
