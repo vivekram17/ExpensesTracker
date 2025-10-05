@@ -95,8 +95,17 @@ spring.jpa.hibernate.ddl-auto=update
 ```
 
 ### 🎨 Screenshots
+### 💰 Expense Tracker Dashboard
+
+![Expense Tracker UI](https://github.com/vivekram17/ExpensesTracker/blob/master/src/main/resources/assets/Screenshot%202025-10-05%20093444.png?raw=true)
+
+### Adding an Expense
+
+![Expense Adding](https://github.com/vivekram17/ExpensesTracker/blob/master/src/main/resources/assets/Screenshot%202025-10-05%20093557.png?raw=true)
 
 
+### Expense Table
 
+![Expense Table UI](https://github.com/vivekram17/ExpensesTracker/blob/master/src/main/resources/assets/Screenshot%202025-10-05%20093616.png?raw=true)
 
 
